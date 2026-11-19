@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f0e5">
+  <title>Árvore da Consciência Negra</title>
+  <style>
+    :root {
+      --ink: #342719;
+      --leaf: #52734a;
+      --leaf-dark: #365638;
+      --gold: #d5a443;
+      --paper: #fffaf0;
+      --wood: #795033;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(ellipse at 50% 28%, rgba(255,255,255,.9), transparent 55%),
+        linear-gradient(135deg, #f8f4e9, #e9e2d0);
+      overflow-x: hidden;
+    }
+    header { text-align: center; padding: 34px 18px 8px; }
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      letter-spacing: .025em;
+      color: #4b3825;
+    }
+    header p {
+      margin: 12px auto 0;
+      max-width: 620px;
+      font-size: clamp(1rem, 2.3vw, 1.2rem);
+      line-height: 1.5;
+      color: #705b42;
+    }
+    .hint {
+      margin: 15px auto 0;
+      font: 600 .85rem/1.4 Arial, sans-serif;
+      color: #6f654f;
+      letter-spacing: .03em;
+    }
+    main { width: 100%; padding: 0 12px 30px; }
+    .tree-wrap {
+      position: relative;
+      width: min(940px, 100%);
+      height: 650px;
+      margin: 0 auto;
+    }
+    .tree-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .branch {
+      fill: none;
+      stroke: var(--wood);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .leaf { fill: var(--leaf); }
+    .leaf:nth-of-type(3n) { fill: #718c50; }
+    .leaf:nth-of-type(4n) { fill: #a1a85a; }
+    .card {
+      position: absolute;
+      width: 166px;
+      min-height: 92px;
+      padding: 13px 12px 12px;
+      border: 1.5px solid #c99b45;
+      border-radius: 10px 10px 13px 13px;
+      background: linear-gradient(145deg, #fffdf6, #f4e5bd);
+      box-shadow: 0 7px 14px rgba(63, 45, 21, .17);
+      color: #4b3825;
+      text-align: center;
+      font: 600 13px/1.35 Arial, sans-serif;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+      z-index: 2;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      animation: sway 4s ease-in-out infinite;
+      transform-origin: 50% -16px;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      width: 2px;
+      height: 19px;
+      background: #a47b3e;
+      top: -20px;
+      left: 50%;
+    }
+    .card::after {
+      content: "";
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #b8893e;
+      top: -23px;
+      left: calc(50% - 2.5px);
+    }
+    .card:hover, .card:focus-visible {
+      z-index: 5;
+      transform: translate(-50%, -50%) scale(1.09);
+      box-shadow: 0 12px 22px rgba(63, 45, 21, .25);
+      background: #fff8df;
+      outline: 2px solid #b8893e;
+      outline-offset: 3px;
+    }
+    .card:active { transform: translate(-50%, -50%) scale(1.04); }
+    .card small {
+      display: block;
+      margin-top: 7px;
+      color: #94713a;
+      font: 700 9px Arial, sans-serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    @keyframes sway {
+      0%, 100% { rotate: -1deg; }
+      50% { rotate: 1deg; }
+    }
+    .ground {
+      position: absolute;
+      width: 72%;
+      height: 28px;
+      bottom: 21px;
+      left: 14%;
+      border-radius: 50%;
+      background: rgba(91, 77, 43, .12);
+      filter: blur(7px);
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(35, 29, 20, .48);
+      z-index: 10;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      width: min(440px, 100%);
+      position: relative;
+      padding: 34px 26px 28px;
+      border: 2px solid #d1a34e;
+      border-radius: 18px;
+      background: #fffaf0;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      text-align: center;
+      animation: appear .22s ease-out;
+    }
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(12px) scale(.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal .symbol { font-size: 2rem; }
+    .modal h2 { margin: 12px 0; font-size: 1.55rem; color: #654624; }
+    .modal p { margin: 0; color: #66553e; font: 1rem/1.65 Arial, sans-serif; }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      border: 0;
+      background: transparent;
+      color: #6b573b;
+      font: 28px Arial, sans-serif;
+      cursor: pointer;
+      padding: 4px 9px;
+    }
+    footer {
+      padding: 0 18px 26px;
+      text-align: center;
+      color: #76664d;
+      font: 13px/1.5 Arial, sans-serif;
+    }
+    @media (max-width: 700px) {
+      header { padding-top: 26px; }
+      .tree-wrap { height: 570px; max-width: 520px; }
+      .card { width: 130px; min-height: 82px; padding: 10px 8px; font-size: 11px; }
+      .card small { font-size: 8px; }
+    }
+    @media (max-width: 390px) {
+      .tree-wrap { height: 520px; }
+      .card { width: 112px; min-height: 78px; font-size: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Árvore da Consciência Negra</h1>
+    <p>Cada frase representa uma história, uma luta e uma conquista.</p>
+    <div class="hint">TOQUE NOS CARTÕES PARA LER AS MENSAGENS</div>
+  </header>
+
+  <main>
+    <section class="tree-wrap" aria-label="Árvore com cartões de frases sobre Consciência Negra">
+      <svg class="tree-svg" viewBox="0 0 900 650" role="img" aria-label="Ilustração de uma árvore com folhas verdes e tronco marrom">
+        <defs>
+          <linearGradient id="trunk" x1="0" x2="1">
+            <stop offset="0" stop-color="#684329"/>
+            <stop offset=".48" stop-color="#95653d"/>
+            <stop offset="1" stop-color="#684329"/>
+          </linearGradient>
+        </defs>
+        <!-- Tronco e raízes -->
+        <path d="M430 585 C405 535 414 475 421 420 C428 360 405 305 390 260
+                 C424 290 442 333 447 376 C456 320 475 278 515 242
+                 C493 306 478 357 479 414 C480 480 497 535 480 585 Z"
+              fill="url(#trunk)" stroke="#5b3b27" stroke-width="5"/>
+        <path d="M443 568 C390 579 363 603 333 620 M458 567 C490 587 522 602 560 620
+                 M432 575 C418 602 407 613 393 628 M474 574 C484 602 492 614 510 630"
+              class="branch" stroke-width="15"/>
+        <!-- Galhos -->
+        <path d="M438 410 C372 354 318 305 253 269 M445 375 C495 321 558 282 642 250
+                 M420 330 C365 292 342 238 326 195 M469 328 C514 273 531 224 548 177
+                 M397 286 C357 248 293 226 244 220 M493 285 C555 235 610 213 679 208
+                 M447 386 C390 385 333 376 276 342 M473 386 C536 376 590 351 650 316"
+              class="branch" stroke-width="17"/>
+        <path d="M438 410 C372 354 318 305 253 269 M445 375 C495 321 558 282 642 250
+                 M420 330 C365 292 342 238 326 195 M469 328 C514 273 531 224 548 177"
+              class="branch" stroke="#a9794b" stroke-width="5"/>
+        <!-- Copa em grupos de folhas -->
+        <g>
+          <ellipse class="leaf" cx="255" cy="255" rx="90" ry="65"/>
+          <ellipse class="leaf" cx="337" cy="198" rx="100" ry="76"/>
+          <ellipse class="leaf" cx="445" cy="175" rx="112" ry="83"/>
+          <ellipse class="leaf" cx="558" cy="205" rx="105" ry="76"/>
+          <ellipse class="leaf" cx="650" cy="255" rx="91" ry="66"/>
+          <ellipse class="leaf" cx="335" cy="300" rx="100" ry="65"/>
+          <ellipse class="leaf" cx="535" cy="300" rx="110" ry="68"/>
+          <ellipse class="leaf" cx="450" cy="255" rx="125" ry="83"/>
+        </g>
+        <g fill="#a3ad62" opacity=".85">
+          <ellipse cx="282" cy="224" rx="19" ry="10" transform="rotate(-28 282 224)"/>
+          <ellipse cx="365" cy="159" rx="22" ry="11" transform="rotate(20 365 159)"/>
+          <ellipse cx="463" cy="120" rx="25" ry="12" transform="rotate(-10 463 120)"/>
+          <ellipse cx="570" cy="169" rx="22" ry="11" transform="rotate(25 570 169)"/>
+          <ellipse cx="635" cy="232" rx="21" ry="11" transform="rotate(-25 635 232)"/>
+          <ellipse cx="384" cy="280" rx="22" ry="11" transform="rotate(25 384 280)"/>
+          <ellipse cx="530" cy="265" rx="24" ry="12" transform="rotate(-20 530 265)"/>
+        </g>
+      </svg>
+
+      <button class="card" style="left:17%;top:39%;animation-delay:-.5s" data-phrase="Nossa história é feita de força, cultura e resistência." data-detail="A história da população negra é marcada por conhecimentos, realizações, lutas e contribuições que ajudam a formar o Brasil."><span>Nossa história é feita de força, cultura e resistência.</span><small>Memória</small></button>
+      <button class="card" style="left:34%;top:24%;animation-delay:-1.2s" data-phrase="Respeitar as diferenças é construir um mundo melhor." data-detail="O respeito reconhece que todas as pessoas têm dignidade e merecem oportunidades, segurança e direitos."><span>Respeitar as diferenças é construir um mundo melhor.</span><small>Respeito</small></button>
+      <button class="card" style="left:52%;top:20%;animation-delay:-2s" data-phrase="Consciência Negra é reconhecer, valorizar e respeitar." data-detail="É um convite para conhecer a história e a cultura negra e enfrentar o racismo todos os dias."><span>Consciência Negra é reconhecer, valorizar e respeitar.</span><small>Consciência</small></button>
+      <button class="card" style="left:70%;top:31%;animation-delay:-.8s" data-phrase="Nossas raízes representam nossa história e identidade." data-detail="A ancestralidade guarda lembranças, saberes, tradições e referências que fortalecem a identidade."><span>Nossas raízes representam nossa história e identidade.</span><small>Ancestralidade</small></button>
+      <button class="card" style="left:84%;top:47%;animation-delay:-1.7s" data-phrase="O racismo não deve ter espaço na sociedade." data-detail="Combater o racismo exige reconhecer as desigualdades, denunciar discriminações e agir para transformar a realidade."><span>O racismo não deve ter espaço na sociedade.</span><small>Igualdade</small></button>
+      <button class="card" style="left:24%;top:59%;animation-delay:-2.4s" data-phrase="Igualdade é um direito de todos." data-detail="Uma sociedade justa garante direitos, respeito e oportunidades sem discriminação por cor ou origem."><span>Igualdade é um direito de todos.</span><small>Direitos</small></button>
+      <button class="card" style="left:76%;top:63%;animation-delay:-.3s" data-phrase="A cultura negra faz parte da identidade brasileira." data-detail="A música, a dança, a culinária, a literatura, a arte e tantos outros saberes negros são fundamentais para o Brasil."><span>A cultura negra faz parte da identidade brasileira.</span><small>Cultura</small></button>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <button class="close" id="closeModal" aria-label="Fechar">&times;</button>
+      <div class="symbol" aria-hidden="true">✊🏿</div>
+      <h2 id="modalTitle"></h2>
+      <p id="modalDetail"></p>
+    </div>
+  </div>
+
+  <footer>20 de novembro · Dia da Consciência Negra<br>Respeitar, reconhecer e valorizar também é construir o futuro.</footer>
+
+  <script>
+    const backdrop = document.getElementById('modalBackdrop');
+    const title = document.getElementById('modalTitle');
+    const detail = document.getElementById('modalDetail');
+    const closeButton = document.getElementById('closeModal');
+
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        title.textContent = card.dataset.phrase;
+        detail.textContent = card.dataset.detail;
+        backdrop.classList.add('open');
+        closeButton.focus();
+      });
+    });
+
+    function closeModal() {
+      backdrop.classList.remove('open');
+    }
+    closeButton.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', event => {
+      if (event.target === backdrop) closeModal();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
